@@ -13,3 +13,20 @@ artists |> length()
 artist = Tunez.Music.get_artist_by_id(test_artist_id)
 Tunez.Music.destroy_artist(artist)
 ```
+
+```elixir
+form = AshPhoenix.Form.for_create(Tunez.Music.Artist, :create)
+```
+
+```elixir
+valid_form = AshPhoenix.Form.validate(form, %{name: "Best Band Ever"}) 
+valid_form |> Map.get(:valid?)
+```
+
+```elixir
+AshPhoenix.Form.submit(form, params: %{name: "Best Band Ever"})
+```
+
+```elixir
+AshPhoenix.Form.submit(valid_form)
+```
