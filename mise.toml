@@ -1,0 +1,8 @@
+[tasks.dev_env_up]
+run = ["docker compose up -d"]
+
+[tasks.dev_env_down]
+run = ["docker compose down"]
+
+[tasks.dev_env_clean]
+run = ["docker compose down", "docker compose up -d"]
