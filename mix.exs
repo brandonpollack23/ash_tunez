@@ -35,6 +35,8 @@ defmodule Tunez.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:exsync, "~> 0.4", only: [:dev]},
+      {:kino, "~> 0.19", only: [:dev]},
       {:ash_postgres, "~> 2.0"},
       {:sourceror, "~> 1.8", only: [:dev, :test]},
       {:ash, "~> 3.0"},

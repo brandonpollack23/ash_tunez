@@ -1,0 +1,15 @@
+# Livebook
+
+## Section
+
+```elixir
+artists = Kino.render(Tunez.Music.read_artists!())
+test_artist_id = artists |> List.last()
+artists |> length()
+
+```
+
+```elixir
+artist = Tunez.Music.get_artist_by_id(test_artist_id)
+Tunez.Music.destroy_artist(artist)
+```

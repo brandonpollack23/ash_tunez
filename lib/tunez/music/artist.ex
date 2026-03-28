@@ -18,6 +18,8 @@ defmodule Tunez.Music.Artist do
     update :update do
       accept [:name, :biography]
     end
+
+    destroy :destroy
   end
 
   attributes do
