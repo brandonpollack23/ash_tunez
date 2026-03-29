@@ -20,7 +20,6 @@ form = AshPhoenix.Form.for_create(Tunez.Music.Artist, :create)
 
 ```elixir
 valid_form = AshPhoenix.Form.validate(form, %{name: "Best Band Ever"}) 
-valid_form |> Map.get(:valid?)
 ```
 
 ```elixir
@@ -29,4 +28,12 @@ AshPhoenix.Form.submit(form, params: %{name: "Best Band Ever"})
 
 ```elixir
 AshPhoenix.Form.submit(valid_form)
+```
+
+```elixir
+form_creation_with_ash_phoenix_ext = Tunez.Music.form_to_create_artist()
+```
+
+```elixir
+Phoenix.Param.to_param(%Tunez.Music.Artist{})
 ```

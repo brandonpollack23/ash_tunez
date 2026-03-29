@@ -12,7 +12,9 @@ run = ["elixir --name tunez_iex@127.0.0.1 --cookie mycookie --no-halt -S mix"]
 
 [tasks."elixir_node:livebook"]
 run = '''
-docker run -p 8080:8080 -p 8081:8081 --pull always -u $(id -u):$(id -g) -v $(pwd):/data \
+docker run -p 8080:8080 -p 8081:8081 --pull always \
+-u $(id -u):$(id -g) \
+-v $(pwd):/data \
 --network host \
 -e LIVEBOOK_DEFAULT_RUNTIME='attached:tunez_iex@127.0.0.1:mycookie' \
 ghcr.io/livebook-dev/livebook 2>&1 \
