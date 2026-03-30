@@ -25,6 +25,9 @@ defmodule TunezWeb.Artists.ShowLive do
         <.h1>
           {@artist.name}
         </.h1>
+        <:subtitle :if={@artist.previous_names != []}>
+          formerly known as {@artist.previous_names |> Enum.join(", ")}
+        </:subtitle>
         <:action>
           <.button_link
             kind="error"
