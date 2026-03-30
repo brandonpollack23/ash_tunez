@@ -1,3 +1,8 @@
+[tools]
+"cargo:open" = "latest"
+"cargo:rainfrog" = "latest"
+mprocs = "latest"
+
 [tasks.dev_env_up]
 run = ["docker compose -f docker-compose.dev.yml up -d"]
 
@@ -5,25 +10,31 @@ run = ["docker compose -f docker-compose.dev.yml up -d"]
 run = ["docker compose -f docker-compose.dev.yml down"]
 
 [tasks.dev_env_clean]
-depends = ["dev_env_up", "dev_env_down"]
+run = [
+  { task = "dev_env_down" },
+  "docker volume rm ash_tunez_postgres_data",
+  { task = "dev_env_up" },
+]
 
 [tasks.elixir_node]
-run = ["elixir --name tunez_iex@127.0.0.1 --cookie mycookie --no-halt -S mix"]
+run = [
+  "elixir --name tunez_elixir@127.0.0.1 --cookie mycookie --no-halt -S mix",
+]
 
-[tasks."elixir_node:livebook"]
+[tasks.iex]
+run = "iex --name tunez_iex@127.0.0.1 --cookie mycookie --no-halt -S mix phx.server"
+
+[tasks."livebook"]
 run = '''
 docker run -p 8080:8080 -p 8081:8081 --pull always \
 -u $(id -u):$(id -g) \
 -v $(pwd):/data \
 --network host \
--e LIVEBOOK_DEFAULT_RUNTIME='attached:tunez_iex@127.0.0.1:mycookie' \
+-e LIVEBOOK_DEFAULT_RUNTIME='attached:tunez_elixir@127.0.0.1:mycookie' \
 ghcr.io/livebook-dev/livebook 2>&1 \
 | tee >(grep -m1 -o 'http://localhost:[^ ]*' | xargs open)
 '''
 
-[tasks.livebook]
+[tasks.dev]
 description = "run a livebook docker container"
-depends = ["dev_env_up", "elixir_node", "elixir_node:livebook"]
-
-[tools]
-"cargo:open" = "latest"
+run = "mprocs 'mise run dev_env_up' 'mise run elixir_node' 'mise run livebook' 'mise run iex'"

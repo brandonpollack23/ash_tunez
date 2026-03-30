@@ -33,7 +33,3 @@ AshPhoenix.Form.submit(valid_form)
 ```elixir
 form_creation_with_ash_phoenix_ext = Tunez.Music.form_to_create_artist()
 ```
-
-```elixir
-Phoenix.Param.to_param(%Tunez.Music.Artist{})
-```

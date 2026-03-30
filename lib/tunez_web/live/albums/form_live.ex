@@ -1,12 +1,26 @@
 defmodule TunezWeb.Albums.FormLive do
   use TunezWeb, :live_view
 
-  def mount(_params, _session, socket) do
-    form = %{}
+  def mount(%{"id" => album_id}, _session, socket) do
+    album = Tunez.Music.get_album_by_id!(album_id, load: [:artist])
+    form = Tunez.Music.form_to_update_album(album)
+
+    socket
+    |> assign(:artist, album.artist)
+    |> assign(:form, form)
+    |> assign(:page_title, "New Album")
+
+    {:ok, socket}
+  end
+
+  def mount(%{"artist_id" => artist_id}, _session, socket) do
+    artist = Tunez.Music.get_artist_by_id!(artist_id)
+    form = Tunez.Music.form_to_create_album(artist_id)
 
     socket =
       socket
-      |> assign(:form, to_form(form))
+      |> assign(:artist, artist)
+      |> assign(:form, form)
       |> assign(:page_title, "New Album")
 
     {:ok, socket}
@@ -27,7 +41,7 @@ defmodule TunezWeb.Albums.FormLive do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input name="artist_id" label="Artist" value="" disabled />
+        <.input name="artist_id" label="Artist" value={@artist.name} disabled />
         <div class="sm:flex gap-8 space-y-8 md:space-y-0">
           <div class="sm:w-3/4"><.input field={form[:name]} label="Name" /></div>
           <div class="sm:w-1/4">
@@ -93,11 +107,27 @@ defmodule TunezWeb.Albums.FormLive do
     """
   end
 
-  def handle_event("validate", %{"form" => _form_data}, socket) do
+  def handle_event("validate", %{"form" => form_data}, socket) do
+    socket =
+      update(socket, :form, &AshPhoenix.Form.validate(&1, form_data))
+
     {:noreply, socket}
   end
 
-  def handle_event("save", %{"form" => _form_data}, socket) do
+  def handle_event("save", %{"form" => form_data}, socket) do
+    socket =
+      case AshPhoenix.Form.submit(socket.assigns.form, params: form_data) do
+        {:ok, %Tunez.Music.Album{artist_id: artist_id}} ->
+          socket
+          |> put_flash(:info, "Album created successfully!")
+          |> push_navigate(to: ~p"/artists/#{artist_id}")
+
+        {:error, form} ->
+          socket
+          |> assign(:form, form)
+          |> put_flash(:error, "Could not save album data")
+      end
+
     {:noreply, socket}
   end
 
